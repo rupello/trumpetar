@@ -2,3 +2,5 @@
 /trumpet.css
 /trumpet.html
 dist/
+.idea/
+node_modules/
