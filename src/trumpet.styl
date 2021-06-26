@@ -1,4 +1,4 @@
-main-color = yellow
+pipe-color = yellow
 bg-color = white
 mouthpiece-color = #ccc
 valve-color = #ccc
@@ -16,7 +16,7 @@ div
   transform: translate(-50%, -50%)
 
 #main-pipe
-  background-color: main-color
+  background-color: pipe-color
   width: 350px
   height: 75px
   border-radius: 1000px
@@ -33,17 +33,17 @@ div
 #lead-pipe
   width: 100px
   height: 15px
-  background-color: main-color;
+  background-color: pipe-color
   position: absolute
   top: 0
   left: -15px
 
 
-#reciever
+#receiver
   height: 15px
   width: 20px
   position: absolute
-  background-color: main-color
+  background-color: pipe-color
   top: 0
   left: -20px
 
@@ -76,7 +76,7 @@ div
   .valve
     height: 100%
     width: 15%
-    background-color: main-color
+    background-color: pipe-color
     position: absolute
 
 #valves .valve.pressed .piston
@@ -128,7 +128,7 @@ div
 
 #bell
   position: absolute
-  background-color: main-color
+  background-color: pipe-color
   top: -50px
   right: -100px
   height: 130px
@@ -136,21 +136,21 @@ div
   z-index: 100
 
 #bell .top-flare
-  background-color: bg-color
   position: absolute
-  top: -150px
-  right: -10px
+  z-index: 100
+  background-color: bg-color
+  border-radius: 200px
   width: 1000px
   height: 200px
-  border-radius: 200px
-  z-index: 100
+  right: -10px
+  top: -150px
 
 #bell .bottom-flare
   position: absolute
+  z-index: 100
   background-color: bg-color
-  width: 1000px
   border-radius: 200px
+  width: 1000px
   height: 200px
   right: -3px
   bottom: -135px
-  z-index: 100
