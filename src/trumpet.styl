@@ -135,22 +135,19 @@ div
   width: 300px
   z-index: 100
 
-#bell .top-flare
+bell-flare(width, height, right)
   position: absolute
   z-index: 100
   background-color: bg-color
   border-radius: 200px
-  width: 1000px
-  height: 200px
-  right: -10px
+  width: width
+  height: height
+  right: right
+
+#bell .top-flare
+  bell-flare(1000px, 200px, -10px)
   top: -150px
 
 #bell .bottom-flare
-  position: absolute
-  z-index: 100
-  background-color: bg-color
-  border-radius: 200px
-  width: 1000px
-  height: 200px
-  right: -3px
+  bell-flare(1000px, 200px, -3px)
   bottom: -135px

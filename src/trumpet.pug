@@ -1,8 +1,10 @@
 doctype html
-html
+html(lang="eng")
     head
         title Web Trumpet
+        meta(charset="UTF-8")
         link(rel="stylesheet", href="trumpet.css")
+        link(rel="stylesheet", href="score.css")
     body
         #container
             #main-pipe
@@ -30,4 +32,10 @@ html
                     .top-cap
                     .piston
                     .button
-        script(src="trumpet.js")
+
+            - const clef="\ue050"
+            - const note="\ue0a2"
+            .score
+                span.clef #{clef}
+                span.tonic.f5.sharp #{note}
+    script(src="trumpet.js")
