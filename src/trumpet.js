@@ -79,37 +79,7 @@
      );
   }
 
-  async function melody() {
-    while(true) {
-      const whole = 1;
-      await playNote('A#4', whole);
-      await playNote('F5', whole);
-      await playNote('D#5', whole / 8);
-      await delay(whole / 16);
-      await playNote('D5', whole / 8);
-      await playNote('C5', whole / 8);
-      await delay(whole / 16);
-      await playNote('A#5', whole);
-      await playNote('F5', whole / 2);
-      await playNote('D#5', whole / 8);
-      await delay(whole / 16);
-      await playNote('D5', whole / 8);
-      await playNote('C5', whole / 8);
-      await delay(whole / 16);
-      await playNote('A#5', whole);
-      await playNote('F5', whole / 2);
-      await playNote('D#5', whole / 8);
-      await delay(whole / 16);
-      await playNote('D5', whole / 8);
-      await playNote('D#5', whole / 8);
-      await playNote('C5', whole);
-    }
-  }
-
-  //window.notes = notes;
-  //window.play = play;
-
-  const noteMap = {
+  const valveMap = {
     "1-DDD": "F#3",
     "1-DUD": "G3",
     "1-UDD": "G#3",
@@ -143,6 +113,40 @@
     "6-UUU": "C6"
   }
 
+  const styleMap = {
+    "F#3": ['f3', 'sharp'],
+    "G3": ['g3'],
+    "G#3": ['g3', 'sharp'],
+    "A3": ['a3'],
+    "A#3": ['b3', 'flat'],
+    "B3": ['b3'],
+    "C4": ['c4'],
+    "C#4": ['c4', 'sharp'],
+    "D4": ['d4'],
+    "D#4": ['e4', 'flat'],
+    "E4": ['e4'],
+    "F4": ['f4'],
+    "F#4": ['f4', 'sharp'],
+    "G4": ['g4'],
+    "G#4": ['g4', 'sharp'],
+    "A4": ['a4'],
+    "A#4": ['b4', 'flat'],
+    "B4": ['b4'],
+    "C5": ['c5'],
+    "C#5": ['c5', 'sharp'],
+    "D5": ['d5'],
+    "D#5": ['e5', 'flat'],
+    "E5": ['e5'],
+    "F5": ['f5'],
+    "F#5": ['f5', 'sharp'],
+    "G5": ['g5'],
+    "G#5": ['g5', 'sharp'],
+    "A5": ['a5'],
+    "A#5": ['b5', 'flat'],
+    "B5": ['b5'],
+    "C6": ['c6']
+}
+
   // const playButton = document.querySelector('#playButton');
   // playButton.disabled = false;
 
@@ -152,20 +156,23 @@
       this._blowing = false;
       this._valves = ['U','U','U'];
       this._partial = '1'
-      this._noteMap = noteMap ;
+      this._noteMap = valveMap ;
+      this.onEndBlowing();
     }
 
     valveDown(valveNumber) {
       let valveIndex = valveNumber-1;
       if(this._valves[valveIndex]==='U') {
-        this.onValveChangedDown(valveIndex)
+        this._valves[valveIndex]='D';
+        this.onValveChanged(valveIndex)
       }
     }
 
     valveUp(valveNumber) {
       let valveIndex = valveNumber-1;
       if(this._valves[valveIndex]==='D') {
-        this.onValveChangedUp(valveIndex)
+        this._valves[valveIndex]='U';
+        this.onValveChanged(valveIndex)
       }
     }
 
@@ -175,38 +182,37 @@
 
     set blowing(blow) {
       if(blow && !this.blowing) {
+        this._blowing = true;
         this.onStartBlowing()
       }
       if(!blow && this.blowing) {
+        this._blowing = false;
         this.onEndBlowing()
       }
     }
 
+    updateScore() {
+      let note = document.querySelector("#note");
+      note.className = 'tonic';
+      note.classList.add(...styleMap[this.note])
+      if(this.blowing) {
+        note.classList.add('note-on');
+      }
+    }
+
     async onStartBlowing() {
-      this._blowing = true;
+      this.updateScore();
       await playNote(this.note, 10)
     }
 
     async onEndBlowing() {
+      this.updateScore();
       this._blowing = false;
       await noteOff(0.75)
     }
 
-
-    async onValveChangedDown(valveIndex) {
-      this._valves[valveIndex]='D';
-      if(this.blowing) {
-        await noteOff()
-        await playNote(this.note, 10)
-      }
-    }
-
-    async playNote() {
-      await playNote(this.note, 10)
-    }
-
-    async onValveChangedUp(valveIndex) {
-      this._valves[valveIndex]='U';
+    async onValveChanged() {
+      this.updateScore();
       if(this.blowing) {
         await noteOff()
         await playNote(this.note, 10)
@@ -225,10 +231,7 @@
 
     async onPartialChanged(p) {
       this._partial = p;
-      if(this.blowing) {
-        noteOff()
-        await playNote(this.note, 10)
-      }
+      await this.onValveChanged();
     }
   }
 
@@ -266,6 +269,7 @@
     switch (e.key) {
       case 'j':
         document.querySelector(".valve.one").classList.remove("pressed");
+
         trumpetAudio.valveUp(1);
         break;
       case 'k':

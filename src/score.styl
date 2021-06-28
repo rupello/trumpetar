@@ -4,38 +4,49 @@ octv = 3
 
 mainOctv = math((octv - .5)/2, 'floor')
 
+// colors
+transparent-grey = #8080804f
+
+// special characters
 // https://w3c.github.io/smufl/latest/tables/staves.html
-stave = '\e014\e014\e014\e014\e014\e014\e014\e014'
+stave = '\e014\e014\e014\e014\e014'
 triple-ledger = '\e012'
 double-ledger = '\e011'
 single-ledger = '\e022'
 sharp-symbol = '\e262'
 flat-symbol = '\e260'
 
+// fonts
 @font-face
   font-family Bravura
   src url("https://s3-us-west-2.amazonaws.com/s.cdpn.io/67868/Bravura.woff")
 
+note-font = Bravura
+
 .score
-  font-family Bravura
-  font-size 60px
+  font-family note-font
+  font-size 40px
   font-weight 100
   position relative
+  top -150px
+  left 450px
   padding 1em 1em
   white-space nowrap
   line-height 2
   width 2.94em
   height 1.04em
+  color grey
   &:before
     content stave
     position absolute
     transform-origin left
     letter-spacing -1px
 .clef
-  font-family Bravura
+  font-family note-font
   display inline-block
   transform translateY(2em / -8)
   margin 0 .2em 0 .2em
+  color grey
 .signature
   display inline-block
   width 90px
@@ -44,10 +55,14 @@ flat-symbol = '\e260'
   >span
     display inline-block
 .tonic
-  font-family Bravura
+  font-family note-font
   display inline-block
-  margin 0 .5em
+  margin 0 .4em
   position relative
+  color transparent-grey
+
+.note-on
+  color black
 
 .tonic.f3
   top (1em*3/4)
@@ -145,16 +160,15 @@ flat-symbol = '\e260'
     left -0.46em
     top (1em*5/8)
 
-
 .sharp
-  left -0.27em
+  left -0.2em
   &:before
     content sharp-symbol
     position relative
-    left -0.15em
+    left -0.2em
 .flat
-  left -0.27em
+  left -0.2em
   &:before
     content flat-symbol
     position relative
-    left -0.15em
+    left -0.2em
