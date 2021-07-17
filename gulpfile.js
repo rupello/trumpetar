@@ -4,6 +4,7 @@ let pug = require('gulp-pug');
 let stylus = require('gulp-stylus');
 let del = require('del');
 let jest = require('gulp-jest').default;
+let filter = require('gulp-filter');
 
 // Get one .styl file and render
 gulp.task('styles', function () {
@@ -21,7 +22,8 @@ gulp.task('pug', function () {
 });
 
 gulp.task('script', function () {
-    return gulp.src('./src/trumpet.js')
+    return gulp.src('./src/*.js')
+        .pipe(filter(['**', '!./src/*.test.js']))
         .pipe(gulp.dest('dist/'));
 });
 
@@ -31,7 +33,7 @@ gulp.task('audio', function () {
 });
 
 gulp.task('mediapipe', function () {
-    return gulp.src('./node_modules/@mediapipe/**/*.js')
+    return gulp.src('./node_modules/@mediapipe/**/*')
         .pipe(gulp.dest('dist/static/mediapipe/'))
 });
 

@@ -26,6 +26,7 @@
   "devDependencies": {
     "del": "^6.0.0",
     "gulp": "^4.0.2",
+    "gulp-filter": "^7.0.0",
     "gulp-jest": "^4.0.4",
     "gulp-pug": "^5.0.0",
     "gulp-stylus": "^2.7.0",
