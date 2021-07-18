@@ -19,6 +19,34 @@ spinner.ontransitionend = () => {
   spinner.style.display = 'none';
 };
 
+function angle2partial(angle) {
+  if(angle < 10) {
+    return 6 ;
+  }
+  else if(angle < 20) {
+    return 5
+  }
+  else if(angle < 30) {
+    return 4
+  }
+  else if(angle < 40) {
+    return 3
+  }
+  else if(angle < 50) {
+    return 2
+  }
+  return 1;
+}
+
+function angle2valve(angle, valve) {
+  if(angle > 90) {
+    window.trumpetAudio.valveDown(valve);
+  }
+  else {
+    window.trumpetAudio.valveUp(valve);
+  }
+}
+
 function onResults(results) {
   // Hide the spinner.
   document.body.classList.add('loaded');
@@ -61,10 +89,15 @@ function onResults(results) {
         setDisplayValue('rh_index', rightHand.indexFlex);
         setDisplayValue('rh_middle', rightHand.middleFlex);
         setDisplayValue('rh_ring', rightHand.ringFlex);
+        angle2valve(rightHand.indexFlex, 1);
+        angle2valve(rightHand.middleFlex, 2);
+        angle2valve(rightHand.ringFlex, 3);
       }
       if(leftHand != null) {
         setDisplayValue('lh_index2thumb', leftHand.thumbIndexDist);
         setDisplayValue('lh_middle', leftHand.middleFlex);
+        window.trumpetAudio.blowing = leftHand.thumbIndexDist < 0.1;
+        window.trumpetAudio.partial = angle2partial(leftHand.middleFlex);
       }
     }
   }

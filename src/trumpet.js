@@ -1,6 +1,5 @@
 
 
-
 (async function() {
   const AUDIO_FILE = 'audio/trumpet.mp3';
 
@@ -235,7 +234,6 @@
     }
   }
 
-  let trumpetAudio = new TrumpetAudio();
 
   async function onKeyDown(e) {
     switch (e.key) {
@@ -292,4 +290,7 @@
   //Whenever the user lets a key up, run the proper function
   window.addEventListener("keyup", onKeyUp);
 
+  window.trumpetAudio = new TrumpetAudio();
+
 })();
+
