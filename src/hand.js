@@ -84,5 +84,7 @@ function fingerMeasurements(landmarks) {
     };
 }
 
-// module.exports = {delta, angle: hand, rad2deg, fingerMeasurements: fingerMeasurements, distance};
+try {
+    module.exports = {delta, angle: hand, rad2deg, fingerMeasurements: fingerMeasurements, distance};
+} catch (e) {}
 
