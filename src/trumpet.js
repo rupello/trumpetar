@@ -1,6 +1,20 @@
 
 
 (async function() {
+
+  function debounce_leading(func, timeout = 300){
+    let timer;
+    return (...args) => {
+      if (!timer) {
+        func.apply(this, args);
+      }
+      clearTimeout(timer);
+      timer = setTimeout(() => {
+        timer = undefined;
+      }, timeout);
+    };
+  }
+
   const AUDIO_FILE = 'audio/trumpet.mp3';
 
   const context = new AudioContext();
@@ -146,12 +160,41 @@
     "C6": ['c6']
 }
 
+class Lock {
+    constructor(timeout, name = "") {
+      this._timeout = timeout;
+      this._locked = false;
+      this._name = name;
+    }
+
+    lock() {
+      if (!this._locked) {
+        this._locked = true;
+        setTimeout(() => {
+              this._locked = false;
+              // console.log(`${this._name} lock() succeeded`);
+            }
+            , this._timeout);
+        return true
+      } else {
+        // console.log(`${this._name} lock() failed`);
+        return false;
+      }
+  }
+}
+
   // const playButton = document.querySelector('#playButton');
   // playButton.disabled = false;
 
   // playButton.onclick = melody;
   class TrumpetAudio {
     constructor() {
+      this._valveLocks = new Array();
+      this._valveLocks[0] = new Lock(20, "valve1");
+      this._valveLocks[1] = new Lock(20, "valve2");
+      this._valveLocks[2] = new Lock(20, "valve3");
+      this._blowLock = new Lock(20, "blow");
+      this._pitchLock = new Lock(20, "pitch");
       this._blowing = false;
       this._valves = ['U','U','U'];
       this._partial = '1'
@@ -160,18 +203,22 @@
     }
 
     valveDown(valveNumber) {
-      let valveIndex = valveNumber-1;
-      if(this._valves[valveIndex]==='U') {
-        this._valves[valveIndex]='D';
-        this.onValveChanged(valveIndex)
+      let valveIndex = valveNumber - 1;
+      if(this._valveLocks[valveIndex].lock()) {
+        if (this._valves[valveIndex] === 'U') {
+          this._valves[valveIndex] = 'D';
+          this.onValveChanged(valveIndex)
+        }
       }
     }
 
     valveUp(valveNumber) {
-      let valveIndex = valveNumber-1;
-      if(this._valves[valveIndex]==='D') {
-        this._valves[valveIndex]='U';
-        this.onValveChanged(valveIndex)
+      let valveIndex = valveNumber - 1;
+      if(this._valveLocks[valveIndex].lock()) {
+        if (this._valves[valveIndex] === 'D') {
+          this._valves[valveIndex] = 'U';
+          this.onValveChanged(valveIndex)
+        }
       }
     }
 
@@ -180,42 +227,56 @@
     }
 
     set blowing(blow) {
-      if(blow && !this.blowing) {
-        this._blowing = true;
-        this.onStartBlowing()
+      // debounce_leading(() => {
+      if(this._blowLock.lock()) {
+        if(blow && !this.blowing) {
+          this._blowing = true;
+          this.onStartBlowing()
+        }
+        if(!blow && this.blowing) {
+          this._blowing = false;
+          this.onEndBlowing()
+        }
       }
-      if(!blow && this.blowing) {
-        this._blowing = false;
-        this.onEndBlowing()
-      }
+      // });
     }
 
     updateScore() {
       let note = document.querySelector("#note");
       note.className = 'tonic';
-      note.classList.add(...styleMap[this.note])
+      if(this.note) {
+        note.classList.add(...styleMap[this.note])
+      }
       if(this.blowing) {
         note.classList.add('note-on');
       }
     }
 
     async onStartBlowing() {
-      this.updateScore();
-      await playNote(this.note, 10)
+        if(this.note) {
+          await this.onStateChanged();
+          await playNote(this.note, 10)
+        }
     }
 
     async onEndBlowing() {
-      this.updateScore();
       this._blowing = false;
+      await this.onStateChanged();
       await noteOff(0.75)
     }
 
     async onValveChanged() {
-      this.updateScore();
+      await this.onStateChanged();
       if(this.blowing) {
         await noteOff()
         await playNote(this.note, 10)
       }
+    }
+
+    async onStateChanged() {
+      this.updateScore();
+      console.log(`${this._blowing}, ${this._valves}, ${this._partial}`)
+
     }
 
     get note() {
@@ -223,8 +284,10 @@
     }
 
     set partial(p) {
-      if(this._partial !== p){
-        this.onPartialChanged(p)
+      if(this._pitchLock.lock()) {
+        if (this._partial !== p) {
+          this.onPartialChanged(p)
+        }
       }
     }
 

@@ -64,12 +64,10 @@ function onResults(results) {
       const classification = results.multiHandedness[index];
       const isRightHand = classification.label === 'Right';
       const landmarks = results.multiHandLandmarks[index];
-      console.log(`${classification.label} ${landmarks.length}`);
       let rightHand = null;
       let leftHand = null;
       if(isRightHand) {
         rightHand = fingerMeasurements(landmarks);
-        console.log(rightHand.indexFlex);
       }
       else {
         leftHand = fingerMeasurements(landmarks);
@@ -126,8 +124,8 @@ camera.start();
 new ControlPanel(controlsElement, {
       selfieMode: true,
       maxNumHands: 2,
-      minDetectionConfidence: 0.5,
-      minTrackingConfidence: 0.5,
+      minDetectionConfidence: 0.9,
+      minTrackingConfidence: 0.9,
       angle: 90
     })
     .add([
